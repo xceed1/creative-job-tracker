@@ -1,0 +1,211 @@
+# 🔐 CREATIVE JOB TRACKER – CONTEXT SNAPSHOT (SAFE HANDOVER)
+
+## PURPOSE
+This snapshot preserves the full technical, functional, and UX context of the Creative Job Tracker so development can continue immediately in a new chat without rediscovery, refactoring, or logic loss.
+
+---
+
+## 1️⃣ WHAT THIS SYSTEM IS
+
+Creative Job Tracker is an internal **service request orchestration platform**, not just a creative tool.
+
+• Users submit job requests  
+• Service departments process them (Traffic implemented first)  
+• Jobs follow a controlled lifecycle  
+• Assignments, files, and activity are fully tracked  
+
+Traffic is the first service provider, but the architecture is designed to scale to HR, IT, Finance, etc.
+
+---
+
+## 2️⃣ CURRENT SYSTEM STATUS (COMPLETED)
+
+### CORE FEATURES
+✔ Authentication + session guard  
+✔ Role-based access (USER, TRAFFIC, DESIGNER, ADMIN, EXECUTIVE)  
+✔ Secure job creation, update, delete  
+✔ Job locking after dispatch  
+✔ Status lifecycle:
+  NEW → DISPATCHED → IN_PROGRESS → COMPLETED → RELEASED  
+✔ Activity logging  
+✔ UUID-based file upload system  
+✔ File cleanup on update and delete  
+✔ Toast notifications (create / update / delete)  
+✔ UX polished (no forced reloads except final refresh)  
+✔ Strong validation rules
+
+---
+
+## 3️⃣ USER DASHBOARD – FINAL BEHAVIOR
+
+### FILTERS
+• Default view: current month only  
+• Search + date range filter  
+• Filter bar is sticky and always visible  
+• Table header is sticky  
+• Row count shown above table header  
+
+### TABLE COLUMN ORDER (FINAL – DO NOT CHANGE)
+1. Job Code  
+2. Client  
+3. Project  
+4. Job Subject  
+5. Received At  
+6. Due Date  
+7. Assigned Designer  
+8. Status  
+9. Actions  
+
+### TABLE UX
+• Black header with white bold text  
+• Alternating row colors (white / light cyan)  
+• Hover disabled where required  
+• Action column vertically aligned (no shifting on multi-line content)  
+• Slide-down details take full table width  
+• Expanding one job collapses others automatically  
+
+---
+
+## 4️⃣ JOB DETAILS SLIDE-DOWN (EXPANDED VIEW)
+
+### BEHAVIOR
+• Full-width expansion under job row  
+• Only one job expanded at a time  
+• Professional grid-based layout  
+
+### CONTENT SHOWN
+• Job Code  
+• Client  
+• Project  
+• Job Subject (replaces status in details view)  
+• Received At  
+• Due Date  
+• Assigned Designer (if dispatched or later)  
+• Full Brief  
+• Reference link (clickable, placeholder supported)  
+• Completed work link (only when status = RELEASED)  
+
+### VISIBILITY RULES
+• User sees completed work ONLY when status = RELEASED  
+• Designer name visible from DISPATCHED onward  
+
+---
+
+## 5️⃣ FILE UPLOAD SYSTEM (PRO-GRADE)
+
+### STORAGE
+• Disk filename: UUID.ext  
+• Database stores: UUID.ext only  
+• Upload size enforced (≤ 1MB)  
+
+### LIFECYCLE
+• Old file deleted on update  
+• File deleted from storage on job delete  
+• Safe unlink logic (no broken paths)  
+
+---
+
+## 6️⃣ DATABASE STATUS
+
+• Fully relational schema  
+• Foreign keys enforced  
+• Tables include:
+  - users  
+  - roles  
+  - departments  
+  - job_orders  
+  - job_status  
+  - job_assignments  
+  - activity_logs  
+
+• Seeded with 50+ test jobs  
+• Status logic verified  
+• Department constraints respected  
+
+⚠️ Full SQL schema + seed data will be pasted in the new chat.
+
+---
+
+## 7️⃣ CRITICAL BUSINESS RULES (DO NOT BREAK)
+
+• Users can edit/delete ONLY when status = NEW  
+• Received info cannot be cleared once set  
+• Assigned designer shown only after dispatch  
+• Completed work shown only after release  
+• Filters do not affect permissions  
+• UI changes must never alter logic  
+
+---
+
+## 8️⃣ NEXT PHASES (NOT YET IMPLEMENTED)
+
+### TRAFFIC DASHBOARD
+• Department queue  
+• Assignment logic  
+• Release control  
+
+### MULTI-DEPARTMENT EXPANSION
+• HR / IT / Finance as service providers  
+• Same job engine, department-specific workflows  
+• Service-based routing  
+
+### FUTURE IDEAS (DISCUSSED)
+• Project-based Gantt chart (feasible)  
+• SLA tracking  
+• Cross-department analytics  
+• Approval chains  
+
+---
+
+## 9️⃣ FILES TO PASTE IN NEW CHAT (MINIMAL SET)
+
+### REQUIRED (PASTE IN THIS ORDER)
+
+1) FULL DATABASE SQL
+   full_database.sql
+
+2) USER DASHBOARD
+   /user/dashboard.php
+
+3) USER APIs
+   /user/create_job_api.php
+   /user/update_job_api.php
+   /user/delete_job.php
+
+4) AUTH
+   /auth/guard.php
+   /auth/login.php
+   /auth/logout.php
+
+5) HELPERS
+   /helpers/activity_logger.php
+
+### NOT REQUIRED
+• Bootstrap / CSS CDNs  
+• Static HTML  
+• Old file versions  
+
+---
+
+## 🔁 HOW TO START THE NEW CHAT
+
+Use this message:
+
+“This is a continuation of the Creative Job Tracker project.
+I’m pasting the full context snapshot, database SQL, and key files.
+Please resume development without changing existing logic or UX.”
+
+Then paste:
+1) This snapshot
+2) SQL file
+3) Files listed above
+
+---
+
+## FINAL NOTE
+
+This system is already enterprise-grade.
+Traffic is only the first service provider.
+Scaling to HR / IT / Finance will be evolution, not rewrite.
+
+Next logical step: Traffic dashboard architecture.

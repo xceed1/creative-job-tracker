@@ -1,0 +1,16 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# XAMPP / Logs
+*.log
+
+# Environment / secrets
+/config/db.php
+
+# Uploads
+/assets/uploads/*
+
+# IDE
+.vscode/
+.idea/

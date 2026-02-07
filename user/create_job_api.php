@@ -65,10 +65,17 @@ try {
     $referenceLink  = $_POST['reference_link'] ?: null;
 
 
-/* ---------------------------------
+    /* ---------------------------------
 | FILE UPLOAD (UUID, ≤ 1MB)
 ----------------------------------*/
+
+    $uploadDir = dirname(__DIR__) . '/uploads/received_formats/';
     $receivedFilePath = null;
+
+    /* DEBUG (temporary) */
+    error_log('[UPLOAD CHECK] dir=' . $uploadDir);
+    error_log('[UPLOAD CHECK] is_dir=' . (int)is_dir($uploadDir));
+    error_log('[UPLOAD CHECK] is_writable=' . (int)is_writable($uploadDir));
 
     if (
         isset($_FILES['received_format_file']) &&
@@ -76,7 +83,6 @@ try {
     ) {
         $file = $_FILES['received_format_file'];
 
-        /* ---------- HARD FAILS ---------- */
         if ($file['error'] !== UPLOAD_ERR_OK) {
             throw new Exception('Upload error code: ' . $file['error']);
         }
@@ -89,39 +95,37 @@ try {
             throw new Exception('Invalid uploaded file');
         }
 
-        /* ---------- PATH ---------- */
-        $uploadDir = dirname(__DIR__) . '/uploads/received_formats/';
-
         if (!is_dir($uploadDir)) {
             if (!mkdir($uploadDir, 0775, true)) {
                 throw new Exception('Failed to create upload directory');
             }
         }
 
-        if (!is_writable($uploadDir)) {
-            throw new Exception('Upload directory is not writable');
+        // Ensure directory exists (this check IS reliable)
+        if (!is_dir($uploadDir)) {
+            throw new Exception('Upload directory does not exist');
         }
 
-        /* ---------- UUID FILENAME ---------- */
-        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        // DO NOT trust is_writable() on Windows
+        // Attempt the move and handle failure instead
 
+
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
         if ($ext === '') {
             throw new Exception('Invalid file extension');
         }
 
         $uuid = bin2hex(random_bytes(16));
         $filename = $uuid . '.' . $ext;
-
         $destination = $uploadDir . $filename;
 
-        /* ---------- MOVE ---------- */
         if (!move_uploaded_file($file['tmp_name'], $destination)) {
             throw new Exception('Failed to move uploaded file');
         }
 
-        /* ---------- STORE RELATIVE PATH ---------- */
         $receivedFilePath = 'uploads/received_formats/' . $filename;
     }
+
 
 
 

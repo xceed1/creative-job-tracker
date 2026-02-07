@@ -1,115 +1,172 @@
 <?php
-declare(strict_types=1);
+// Public login form
+// NO guard
+// NO redirects here
 
-/* ============================================================
-| SESSION
-============================================================ */
 session_start();
 
-/* ============================================================
-| AUTO REDIRECT IF LOGGED IN
-============================================================ */
-if (isset($_SESSION['user'])) {
-    switch ($_SESSION['user']['role']) {
-        case 'ADMIN':
-            header("Location: ../admin/dashboard.php");
-            break;
-
-        case 'TRAFFIC':
-            header("Location: ../traffic/dashboard.php");
-            break;
-
-        case 'DESIGNER':
-            header("Location: ../designer/dashboard.php");
-            break;
-
-        case 'EXECUTIVE':
-            header("Location: ../admin/performance_dashboard.php");
-            break;
-
-        case 'USER':
-        default:
-            header("Location: ../user/dashboard.php");
-            break;
-    }
-    exit;
-}
-
-/* ============================================================
-| ERROR MAPPING (SAFE & USER-FRIENDLY)
-============================================================ */
 $error = $_GET['error'] ?? null;
 
-$message = null;
-
-switch ($error) {
-    case '1':
-        $message = 'Invalid email or password';
-        break;
-
-    case 'department_required':
-        $message = 'Your account is not linked to a department';
-        break;
-
-    case 'system':
-        $message = 'System temporarily unavailable. Please try again.';
-        break;
-}
+$errorMessage = match ($error) {
+    '1' => 'Invalid email or password.',
+    'department_required' => 'Your account is missing a department assignment. Please contact administration.',
+    'system' => 'The system is temporarily unavailable. Please try again later.',
+    default => null
+};
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="utf-8">
-    <title>Login</title>
+    <meta charset="UTF-8">
+    <title>Sign In — Service Request Platform</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+        }
+
+        .login-container {
+            min-height: 100vh;
+        }
+
+        .login-card {
+            max-width: 420px;
+            width: 100%;
+        }
+
+        .brand {
+            font-weight: 700;
+            letter-spacing: -0.4px;
+        }
+
+        .brand-sub {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        footer {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+    </style>
 </head>
 
-<body class="bg-light">
+<body>
+    <!-- ================= NAVBAR ================= -->
+<nav class="navbar navbar-dark bg-dark shadow-sm">
+    <div class="container-fluid">
 
-<div class="container d-flex justify-content-center align-items-center" style="min-height:100vh;">
-    <div class="card shadow-sm" style="width: 380px;">
-        <div class="card-body">
+        <div class="d-flex align-items-center w-100 px-4">
+            <a href="/creative-job-tracker/index.php"
+               class="navbar-brand d-flex align-items-center gap-2 fw-semibold">
 
-            <h4 class="text-center mb-3">Login</h4>
+                <img src="/creative-job-tracker/assets/Untitled-1.jpg"
+                     height="32"
+                     alt="Pureminds Logo">
 
-            <?php if ($message): ?>
-                <div class="alert alert-danger">
-                    <?= htmlspecialchars($message) ?>
+                <span class="d-none d-md-inline">
+                    Service Request Platform
+                </span>
+            </a>
+        </div>
+
+    </div>
+</nav>
+
+
+
+
+    <div class="container login-container d-flex align-items-center justify-content-center">
+
+        <div class="login-card">
+
+            <!-- BRAND -->
+            <div class="text-center mb-4">
+                <div class="brand h4 mb-1">Service Request Platform</div>
+                <div class="brand-sub">
+                    Secure access for authorized users
                 </div>
-            <?php endif; ?>
+            </div>
 
-            <form method="POST" action="/creative-job-tracker/auth/login.php">
+            <!-- CARD -->
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
 
-                <div class="mb-3">
-                    <label class="form-label">Email</label>
-                    <input
-                        type="email"
-                        name="email"
-                        class="form-control"
-                        required
-                        autofocus
-                    >
+                    <h5 class="fw-semibold mb-3 text-center">
+                        Sign In
+                    </h5>
+
+                    <?php if ($errorMessage): ?>
+                        <div class="alert alert-danger small">
+                            <?= htmlspecialchars($errorMessage) ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <form method="post" action="login.php" autocomplete="off">
+
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">
+                                Email Address
+                            </label>
+                            <input
+                                type="email"
+                                name="email"
+                                class="form-control"
+                                required
+                                autofocus>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">
+                                Password
+                            </label>
+                            <input
+                                type="password"
+                                name="password"
+                                class="form-control"
+                                required>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button class="btn btn-primary">
+                                Sign In
+                            </button>
+                        </div>
+
+                    </form>
                 </div>
+            </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Password</label>
-                    <input
-                        type="password"
-                        name="password"
-                        class="form-control"
-                        required
-                    >
+            <!-- FOOTER -->
+            <div class="text-center mt-4">
+                <a href="/creative-job-tracker/index.php"
+                    class="text-decoration-none small">
+                    ← Back to home
+                </a>
+            </div>
+
+            <!-- ================= FOOTER ================= -->
+            <footer class="py-4">
+                <div class="container text-center">
+                    <div class="mb-1">
+                        PUREMINDS <?= date('Y') ?> Service Request Management Platform
+                    </div>
+                    <div class="text-muted">
+                        Internal enterprise system • All rights reserved
+                    </div>
                 </div>
-
-                <button type="submit" class="btn btn-primary w-100">
-                    Login
-                </button>
-
-            </form>
+            </footer>
 
         </div>
+
     </div>
-</div>
 
 </body>
+
 </html>

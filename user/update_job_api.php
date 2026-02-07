@@ -101,9 +101,14 @@ SELECT
             }
         }
 
-        if (!is_writable($uploadDir)) {
-            throw new Exception('Upload directory is not writable');
+        // Ensure directory exists (this check IS reliable)
+        if (!is_dir($uploadDir)) {
+            throw new Exception('Upload directory does not exist');
         }
+
+        // DO NOT trust is_writable() on Windows
+        // Attempt the move and handle failure instead
+
 
         $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
         if ($ext === '') {
@@ -186,7 +191,7 @@ SELECT
         $userId
     ]);
 
-/* ---------------------------------
+    /* ---------------------------------
 | DELETE OLD FILE (POST-UPDATE)
 ----------------------------------*/
     if ($oldFileToDelete && is_file($oldFileToDelete)) {

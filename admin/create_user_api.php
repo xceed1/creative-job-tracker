@@ -19,11 +19,10 @@ try {
     /* -------- INPUT -------- */
     $fullName     = trim($_POST['full_name'] ?? '');
     $email        = trim($_POST['email'] ?? '');
-    $password     = $_POST['password'] ?? '';
     $roleId       = (int)($_POST['role_id'] ?? 0);
     $departmentId = $_POST['department_id'] !== '' ? (int)$_POST['department_id'] : null;
 
-    if ($fullName === '' || $email === '' || $password === '' || $roleId <= 0) {
+    if ($fullName === '' || $email === '' || $roleId <= 0) {
         throw new Exception('Missing required fields');
     }
 
@@ -34,13 +33,13 @@ try {
     /* -------- CHECK EMAIL UNIQUE -------- */
     $check = $pdo->prepare("SELECT id FROM users WHERE email = ?");
     $check->execute([$email]);
-
     if ($check->fetch()) {
         throw new Exception('Email already exists');
     }
 
-    /* -------- HASH PASSWORD -------- */
-    $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+    /* -------- TEMP PASSWORD -------- */
+    $tempPassword = bin2hex(random_bytes(4)); // 8 chars
+    $passwordHash = password_hash($tempPassword, PASSWORD_DEFAULT);
 
     /* -------- INSERT USER -------- */
     $stmt = $pdo->prepare("
@@ -52,9 +51,10 @@ try {
             role_id,
             department_id,
             is_active,
+            force_password_change,
             created_at
         )
-        VALUES (?, ?, ?, ?, ?, 1, NOW())
+        VALUES (?, ?, ?, ?, ?, 1, 1, NOW())
     ");
 
     $stmt->execute([
@@ -66,7 +66,10 @@ try {
     ]);
 
     ob_clean();
-    echo json_encode(['success' => true]);
+    echo json_encode([
+        'success' => true,
+        'temp_password' => $tempPassword
+    ]);
     exit;
 
 } catch (Throwable $e) {

@@ -65,13 +65,13 @@ session_start();
                 <a href="/creative-job-tracker/index.php"
                     class="navbar-brand d-flex align-items-center gap-2 fw-semibold">
 
-                    <img src="/creative-job-tracker/assets/Untitled-1.jpg"
+                    <img src="/creative-job-tracker/assets/pureminds.png"
                         height="32"
                         alt="Pureminds logo">
 
-                    <span class="d-none d-md-inline">
+                    <!-- <span class="d-none d-md-inline">
                         Service Request Platform
-                    </span>
+                    </span> -->
                 </a>
             </div>
 
@@ -96,9 +96,11 @@ session_start();
                     Access Platform
                 </a>
 
-                <button class="btn btn-outline-secondary btn-lg px-4" disabled>
+                <a href="/creative-job-tracker/auth/request_access_form.php"
+                    class="btn btn-outline-secondary btn-lg px-4">
                     Request Access
-                </button>
+                </a>
+
             </div>
 
         </div>

@@ -26,6 +26,39 @@ try {
         throw new Exception('Invalid input');
     }
 
+    /* -------- FETCH CURRENT USER STATE -------- */
+    $stmt = $pdo->prepare("
+        SELECT is_active
+        FROM users
+        WHERE id = ?
+        LIMIT 1
+    ");
+    $stmt->execute([$userId]);
+    $current = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$current) {
+        throw new Exception('User not found');
+    }
+
+    $tempPassword = null;
+
+    /* -------- ACTIVATION LOGIC -------- */
+    if ((int)$current['is_active'] === 0 && $isActive === 1) {
+
+        // Generate temp password
+        $tempPassword = bin2hex(random_bytes(4));
+        $passwordHash = password_hash($tempPassword, PASSWORD_DEFAULT);
+
+        $pdo->prepare("
+            UPDATE users
+            SET
+                password = ?,
+                force_password_change = 1
+            WHERE id = ?
+        ")->execute([$passwordHash, $userId]);
+    }
+
+    /* -------- UPDATE USER -------- */
     $stmt = $pdo->prepare("
         UPDATE users
         SET
@@ -45,7 +78,10 @@ try {
     ]);
 
     ob_clean();
-    echo json_encode(['success' => true]);
+    echo json_encode([
+        'success' => true,
+        'temp_password' => $tempPassword
+    ]);
     exit;
 
 } catch (Throwable $e) {

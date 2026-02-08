@@ -28,4 +28,14 @@ function requireRole(array $roles = []): void
         http_response_code(403);
         exit('Access denied');
     }
+
+    // Force password change
+    if (
+        isset($user['force_password_change']) &&
+        (int)$user['force_password_change'] === 1 &&
+        !str_contains($_SERVER['REQUEST_URI'], 'change_password.php')
+    ) {
+        header("Location: /creative-job-tracker/auth/change_password.php");
+        exit;
+    }
 }

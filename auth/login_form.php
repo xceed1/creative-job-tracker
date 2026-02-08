@@ -59,25 +59,25 @@ $errorMessage = match ($error) {
 
 <body>
     <!-- ================= NAVBAR ================= -->
-<nav class="navbar navbar-dark bg-dark shadow-sm">
-    <div class="container-fluid">
+    <nav class="navbar navbar-dark bg-dark shadow-sm">
+        <div class="container-fluid">
 
-        <div class="d-flex align-items-center w-100 px-4">
-            <a href="/creative-job-tracker/index.php"
-               class="navbar-brand d-flex align-items-center gap-2 fw-semibold">
+            <div class="d-flex align-items-center w-100 px-4">
+                <a href="/creative-job-tracker/index.php"
+                    class="navbar-brand d-flex align-items-center gap-2 fw-semibold">
 
-                <img src="/creative-job-tracker/assets/Untitled-1.jpg"
-                     height="32"
-                     alt="Pureminds Logo">
+                    <img src="/creative-job-tracker/assets/pureminds.png"
+                        height="32"
+                        alt="Pureminds Logo">
 
-                <span class="d-none d-md-inline">
+                    <!-- <span class="d-none d-md-inline">
                     Service Request Platform
-                </span>
-            </a>
-        </div>
+                </span> -->
+                </a>
+            </div>
 
-    </div>
-</nav>
+        </div>
+    </nav>
 
 
 
@@ -138,6 +138,13 @@ $errorMessage = match ($error) {
                                 Sign In
                             </button>
                         </div>
+
+                        <div class="text-center mt-3">
+                            <small class="text-muted">
+                                Forgot your password? Please contact system administrator.
+                            </small>
+                        </div>
+
 
                     </form>
                 </div>
